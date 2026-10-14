@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KineticType: SVG Path Text Animator & CSS Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M4 6h16M4 18h10"/></svg>
+      <h1>KineticType</h1>
+    </div>
+    <p class="tagline">Design, bend & animate text along paths with instant code export.</p>
+  </header>
+
+  <main class="app-container">
+    <!-- Control Panel Sidebar -->
+    <section class="sidebar" aria-label="Controls">
+      <div class="control-group">
+        <label for="text-input">Your Text</label>
+        <input type="text" id="text-input" value="Flowing along the digital curve ✨" maxlength="80">
+      </div>
+
+      <div class="control-row">
+        <div class="control-group">
+          <label for="font-size">Font Size (<span id="val-font-size">28</span>px)</label>
+          <input type="range" id="font-size" min="12" max="64" value="28">
+        </div>
+        <div class="control-group">
+          <label for="letter-spacing">Spacing (<span id="val-spacing">0</span>px)</label>
+          <input type="range" id="letter-spacing" min="-5" max="20" value="0">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label for="font-family">Typography Style</label>
+        <select id="font-family">
+          <option value="system-ui, sans-serif">Modern Sans</option>
+          <option value="Georgia, serif">Classic Serif</option>
+          <option value="'Courier New', monospace">Monospace Code</option>
+          <option value="Impact, sans-serif">Bold Display</option>
+        </select>
+      </div>
+
+      <hr class="divider">
+
+      <h3>Path Curvature</h3>
+      <div class="control-group">
+        <label for="path-preset">Curve Preset</label>
+        <select id="path-preset">
+          <option value="wave">Gentle Wave</option>
+          <option value="arch">Deep Arch</option>
+          <option value="loop">Loop / Valley</option>
+          <option value="flat">Flat Line</option>
+        </select>
+      </div>
+
+      <div class="control-row">
+        <div class="control-group">
+          <label for="curve-depth">Curve Depth (<span id="val-depth">50</span>)</label>
+          <input type="range" id="curve-depth" min="-150" max="150" value="50">
+        </div>
+        <div class="control-group">
+          <label for="curve-skew">Asymmetry (<span id="val-skew">50</span>%)</label>
+          <input type="range" id="curve-skew" min="0" max="100" value="50">
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <h3>Animation Kinetics</h3>
+      <div class="control-group">
+        <label for="anim-speed">Speed (<span id="val-speed">5</span>s)</label>
+        <input type="range" id="anim-speed" min="1" max="20" value="5">
+      </div>
+
+      <div class="control-row">
+        <div class="control-group">
+          <label for="anim-direction">Direction</label>
+          <select id="anim-direction">
+            <option value="normal">Forward →</option>
+            <option value="reverse">Backward ←</option>
+            <option value="alternate">Oscillate ⇄</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="text-color">Text Color</label>
+          <input type="color" id="text-color" value="#6366f1">
+        </div>
+      </div>
+
+      <div class="toggle-group">
+        <label class="switch">
+          <input type="checkbox" id="show-path-toggle" checked>
+          <span class="slider-round"></span>
+        </label>
+        <span>Show Guide Path</span>
+      </div>
+    </section>
+
+    <!-- Main Stage Workspace -->
+    <section class="workspace">
+      <div class="canvas-card">
+        <div class="canvas-header">
+          <span class="status-dot"></span> Live Preview
+        </div>
+        <div class="svg-stage-wrapper" id="stage-wrapper">
+          <svg id="preview-svg" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <path id="dynamic-path" d="M 50 200 Q 400 200 750 200" />
+            </defs>
+            <path id="guide-path" d="M 50 200 Q 400 200 750 200" class="guide-line" />
+            <text id="rendered-text">
+              <textPath id="text-path-ref" href="#dynamic-path" startOffset="0%" text-anchor="start">
+                Flowing along the digital curve ✨
+              </textPath>
+            </text>
+          </svg>
+          <div class="canvas-handles">
+            <div class="handle" id="handle-start" title="Start Point"></div>
+            <div class="handle" id="handle-control" title="Control Point (Bend)"></div>
+            <div class="handle" id="handle-end" title="End Point"></div>
+          </div>
+        </div>
+        <p class="hint">Tip: Drag the glowing handles directly on the canvas to sculpt the path shape.</p>
+      </div>
+
+      <!-- Code Export Box -->
+      <div class="export-card">
+        <div class="export-tabs">
+          <button class="tab-btn active" data-target="code-svg">SVG Code</button>
+          <button class="tab-btn" data-target="code-css">CSS Animation</button>
+          <button class="copy-btn" id="copy-code-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Copy Code
+          </button>
+        </div>
+        <div class="code-output-container">
+          <pre id="code-svg" class="code-pane active"><code>&lt;svg viewBox="0 0 800 400"&gt;
+  &lt;defs&gt;
+    &lt;path id="curve" d="M 50 200 Q 400 200 750 200" /&gt;
+  &lt;/defs&gt;
+  &lt;text font-size="28" fill="#6366f1"&gt;
+    &lt;textPath href="#curve" startOffset="0%"&gt;Flowing along the digital curve ✨&lt;/textPath&gt;
+  &lt;/text&gt;
+&lt;/svg&gt;</code></pre>
+          <pre id="code-css" class="code-pane"><code>@keyframes textFlow {
+  0% { startOffset: 0%; }
+  100% { startOffset: 100%; }
+}
+textPath {
+  animation: textFlow 5s linear infinite;
+}</code></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
